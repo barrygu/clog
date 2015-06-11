@@ -1,0 +1,36 @@
+CLOG_SRCS=$(wildcard *.cpp)
+CLOG_OBJS=$(CLOG_SRCS:.cpp=.o)
+
+CPP=g++
+CPPFLAGS=-Wall -O
+CPP_INCLUDE=-I.
+
+TARGET=clog.exe
+
+all: $(TARGET)
+
+cmake.h:
+	@touch $@
+	@echo "/* Package information */" >> $@
+	@echo "#define PACKAGE_STRING    \"clog 1.1.0\"" >> $@
+	@echo >> $@
+	@echo "/* Compiling platform */" >> $@
+	@echo "/* #undef LINUX */" >> $@
+	@echo "/* #undef DARWIN */" >> $@
+	@echo "#define CYGWIN" >> $@
+	@echo "/* #undef FREEBSD */" >> $@
+	@echo "/* #undef OPENBSD */" >> $@
+	@echo "/* #undef HAIKU */" >> $@
+	@echo "/* #undef SOLARIS */" >> $@
+	@echo "/* #undef UNKNOWN */" >> $@
+
+clog.o: clog.cpp cmake.h
+.cpp.o: $(CLOG_SRCS)
+	$(CPP) $(CPPFLAGS) $(CPP_INCLUDE) -c $< -o $@
+
+$(TARGET): $(CLOG_OBJS)
+	$(CPP) -s -o $@ $^
+
+.PHONY: clean
+clean:
+	rm -f *.o cmake.h $(TARGET)
